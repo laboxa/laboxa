@@ -1,0 +1,11 @@
+services:
+  mediapipe-app:
+    build: .
+    volumes:
+      - ./app:/app
+      - /tmp/.X11-unix:/tmp/.X11-unix  # Xソケット共有
+    environment:
+      - DISPLAY=${DISPLAY}             # ディスプレイ環境変数
+    devices:
+      - "/dev/video0:/dev/video0"
+    privileged: true
