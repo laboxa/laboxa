@@ -23,5 +23,5 @@ RUN pip install --no-cache-dir -r requirements.txt
 # アプリのコードをコピー
 COPY app/ .
 
-CMD ["python", "main.py"]
-
+#CMD ["python", "main.py"]
+CMD ["python", "good-sign.py"]
