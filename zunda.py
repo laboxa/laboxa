@@ -7,7 +7,7 @@ import pyaudio
 def talk(text):
     try:
         # エンジン起動時に表示されているIP、portを指定
-        host = "127.0.0.1"
+        host = "host.docker.internal"
         port = 50021
         
         # 音声化する文言と話者を指定(3で標準ずんだもんになる)
