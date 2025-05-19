@@ -2,7 +2,7 @@ from sentence_transformers import SentenceTransformer, util
 
 def cosineScore(text1, text2):
     # モデルのロード
-    model = SentenceTransformer('paraphrase-MiniLM-L6-v2')
+    model = SentenceTransformer('paraphrase-multilingual-MiniLM-L12-v2')
 
     # 文章をベクトルに変換
     embeddings1 = model.encode(text1, convert_to_tensor=True)
