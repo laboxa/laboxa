@@ -1,8 +1,19 @@
-import compSentence
+from sentence_transformers import SentenceTransformer, util
 import speech_recognition as sr
 import os
 
 threshold = 0.85
+model = SentenceTransformer('paraphrase-multilingual-MiniLM-L12-v2')
+
+def cosineScore(text1, text2):
+    # 文章をベクトルに変換
+    embeddings1 = model.encode(text1, convert_to_tensor=True)
+    embeddings2 = model.encode(text2, convert_to_tensor=True)
+
+    # コサイン類似度の計算
+    cosine_score = util.pytorch_cos_sim(embeddings1, embeddings2)[0][0]
+    
+    return cosine_score
 
 def main():
     r = sr.Recognizer()
@@ -16,7 +27,7 @@ def main():
             recognized_text = r.recognize_google(audio, language='ja-JP')
             print("認識結果:", recognized_text)
             
-            compVal = compSentence.cosineScore(recognized_text, "動画を再生して")
+            compVal = cosineScore(recognized_text, "動画を再生して")
             print("類似度スコア:", compVal)
             
             if compVal.item() >= threshold:
