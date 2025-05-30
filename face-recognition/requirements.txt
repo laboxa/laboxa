@@ -1,1 +1,5 @@
 opencv-python==4.11.0.86
+facenet_pytorch
+faiss-cpu
+matplotlib==3.10.3
+kagglehub==0.3.12

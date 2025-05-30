@@ -2,10 +2,14 @@ FROM python:3.10
 
 WORKDIR /face-recognition
 
-COPY . /face-recognition
+COPY ./requirements.txt /face-recognition/
 
-RUN pip install -r requirements.txt
+RUN apt-get -y update \
+    && apt-get -y install libopencv-dev
+RUN pip install --upgrade pip setuptools wheel \
+    && pip install -r requirements.txt
 
-# EXPOSE 5000
+# # EXPOSE 5000
 
-CMD ["python3", "test.py"]
+CMD ["bash"]
+# CMD ["python3", "test.py"]
