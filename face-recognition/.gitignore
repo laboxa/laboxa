@@ -2,3 +2,5 @@
 /kaggle/
 
 *.jpg
+*:Zone.Identifier
+*.npy

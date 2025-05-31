@@ -9,7 +9,5 @@ RUN apt-get -y update \
 RUN pip install --upgrade pip setuptools wheel \
     && pip install -r requirements.txt
 
-# # EXPOSE 5000
-
 CMD ["bash"]
 # CMD ["python3", "test.py"]

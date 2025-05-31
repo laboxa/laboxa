@@ -1,15 +1,14 @@
 from facenet_pytorch import MTCNN, InceptionResnetV1
 from PIL import Image
 import numpy as np
-# import matplotlib.pyplot as plt
 import faiss
 import torch
 import glob
 from tqdm import tqdm
-# import random
 
-
+image_extensions = (".jpg")
 files = glob.glob("./kaggle/input/face-recognition-dataset/Original Images/Original Images/*/*")
+files = [f for f in files if f.lower().endswith(image_extensions)]
 
 # 名前を取得
 labels = []
@@ -106,6 +105,7 @@ from collections import Counter
 
 deviceid = 0  # カメラデバイスID
 capture = cv2.VideoCapture(deviceid)
+capture.set(cv2.CAP_PROP_FOURCC, cv2.VideoWriter_fourcc('M','J','P','G'))
 
 if not capture.isOpened():
     print("カメラのオープンに失敗しました")
