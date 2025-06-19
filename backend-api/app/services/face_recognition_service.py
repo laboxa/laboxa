@@ -73,7 +73,7 @@ class Face_recognition:
         face = self.mtcnn(frame)
         if face is None:
             print("顔が検出できませんでした")
-            exit()
+            return {"status": False, "name": None}
         face = face.to(self.device)
         embedding = self.resnet(face.unsqueeze(0)).cpu().detach().numpy()
         D, I = self.index.search(embedding, 10)
