@@ -1,4 +1,4 @@
-fastapi==0.104.1
+fastapi[all]==0.104.1
 uvicorn[standard]==0.24.0
 sqlalchemy==2.0.23
 pymysql==1.1.0
@@ -8,3 +8,7 @@ passlib[bcrypt]==1.7.4
 python-dotenv==1.0.0
 pydantic==2.5.0
 cryptography==41.0.7
+facenet_pytorch
+faiss-cpu
+matplotlib==3.10.3
+kagglehub==0.3.12

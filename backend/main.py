@@ -1,6 +1,7 @@
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from dotenv import load_dotenv
+from api.endpoints import face_recognition
 
 from config import AppConfig
 from database import DatabaseManager
@@ -100,6 +101,9 @@ async def get_users():
             return {"data": users}
     except Exception as e:
         return {"error": str(e)}
+
+app.include_router(face_recognition.router, prefix="/face_recognition", tags=["Face_recognition"])
+
 
 if __name__ == "__main__":
     import uvicorn
