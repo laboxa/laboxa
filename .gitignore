@@ -253,7 +253,6 @@ Thumbs.db
 # Database
 *.db
 *.sqlite3
-*.sql
 
 # Backup files
 *.bak
