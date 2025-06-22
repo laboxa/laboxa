@@ -81,10 +81,10 @@ def send(name):
             "name": name,
         }
         with open(file, "rb") as f:
-            files = {"npy_file": (os.path.basename(file), f, "application/octet-stream")}
-
-        response = requests.post(url=endpoint, data=params, files = files)
-        print(response.json())
+            files = {"npy_file": (f"{name}_all_embeddings.npy", f, "application/octet-stream")}
+            response = requests.post(url=endpoint, data=params, files = files)
+            print(response.json())
+        break
 
 
 def main():
