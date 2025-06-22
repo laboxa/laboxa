@@ -6,9 +6,12 @@ import torch
 from tqdm import tqdm
 from PIL import Image
 import numpy as np
+import requests
+import os
 
 ImgRootDir = "./kaggle/input/face-recognition-dataset/Original Images/Original Images/"
 image_extensions = (".jpg")
+embedding_extensions = (".npy")
 
 def capture(name):
     dirPath = ImgRootDir + name + "/"
@@ -67,7 +70,22 @@ def learn(name):
 
     np.save(f"{ImgRootDir}{name}/{name}_all_embeddings.npy", embeddings)
 
-    
+host = "52.43.43.101:8000"
+endpoint = f"http://{host}/face_recognition/upload_npy"
+
+def send(name):
+    embedding_files = glob.glob(f"./kaggle/input/face-recognition-dataset/Original Images/Original Images/{name}/*")
+    embedding_files = [f for f in embedding_files if f.lower().endswith(embedding_extensions)]
+    for file in embedding_files:
+        params = {
+            "name": name,
+        }
+        with open(file, "rb") as f:
+            files = {"npy_file": (os.path.basename(file), f, "application/octet-stream")}
+
+        response = requests.post(url=endpoint, data=params, files = files)
+        print(response.json())
+
 
 def main():
     print("名前を入力してください")
@@ -75,9 +93,11 @@ def main():
     print("写真を撮影しています．カメラに注目してください")
     capture(name)
     print("撮影が終了しました")
-    print("学習を開始します")
+    print("特徴量を抽出します")
     learn(name)
-    print("学習が終了しました")
+    print("特徴量を抽出しました")
+    send(name)
+    print ("特徴量を送信しました")
 
 
 if __name__ == "__main__":
