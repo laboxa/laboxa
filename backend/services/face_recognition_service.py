@@ -6,6 +6,8 @@ import numpy as np
 import glob
 from pathlib import Path
 
+from repository import user_repository
+
 Base_dir = Path(__file__).resolve().parent
 Embedding_extensions = (".npy")
 
@@ -82,8 +84,8 @@ class Face_recognition:
         D, I = self.index.search(embedding, 10)
 
         print("\n\n類似度の高い人物")
-        for d, i in zip(D[0], I[0]):
-            print("  distance = ", d, "index = ", i, self.id2name[i])
+        # for d, i in zip(D[0], I[0]):
+            # print("  distance = ", d, "index = ", i, self.id2name[i])
 
         counter = Counter(I[0])
         predicted_id, freq = counter.most_common(1)[0]
@@ -98,6 +100,20 @@ face_recognition = Face_recognition()
 
 def inference(frame):
     return face_recognition.inference(frame)
+
+# 入室
+def checkin(frame):
+    result = face_recognition.inference(frame)
+    if not result.get("status") or user_repository.get_current_type(result.get("name")).get("data")[0].get("type") == "checkin":
+        return False
+    return user_repository.set_attendance_logs(result.get("name"), "checkin")
+
+# 退室
+def checkout(frame):
+    result = face_recognition.inference(frame)
+    if not result.get("status") or user_repository.get_current_type(result.get("name")).get("data")[0].get("type") == "checkout":
+        return False
+    return user_repository.set_attendance_logs(result.get("name"), "checkout")
 
 
 # npyファイルのアップロード

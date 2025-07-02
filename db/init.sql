@@ -20,7 +20,8 @@ INSERT INTO users (name) VALUES
 ('山田美咲'),
 ('高橋健太'),
 ('渡辺真由美'),
-('okayu');
+('okayu'),
+('kazuyaIKEUCHI');
 
 -- サンプルデータを挿入
 INSERT INTO attendance_logs (user_name, type, timestamp) VALUES

@@ -262,3 +262,7 @@ Thumbs.db
 # Temporary files
 *.tmp
 *.temp
+
+# face-recognition data
+/npys
+*.npy
