@@ -19,7 +19,7 @@ RUN pip install --upgrade pip \
     && pip install --no-cache-dir -r requirements.txt
 
 # アプリケーションのソースコードをコピー
-COPY . .
+# COPY . .
 
 # ポート8000を公開
 EXPOSE 8000

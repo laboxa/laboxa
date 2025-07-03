@@ -104,13 +104,16 @@ def inference(frame):
 # 入室
 def checkin(frame):
     result = face_recognition.inference(frame)
-    if not result.get("status") or user_repository.get_current_type(result.get("name")).get("data")[0].get("type") == "checkin":
-        return False
+    if len(user_repository.get_current_type(result.get("name")).get("data")) != 0:
+        if not result.get("status") or user_repository.get_current_type(result.get("name")).get("data")[0].get("type") == "checkin":
+            return False
     return user_repository.set_attendance_logs(result.get("name"), "checkin")
 
 # 退室
 def checkout(frame):
     result = face_recognition.inference(frame)
+    if len(user_repository.get_current_type(result.get("name")).get("data")) == 0:
+        return False
     if not result.get("status") or user_repository.get_current_type(result.get("name")).get("data")[0].get("type") == "checkout":
         return False
     return user_repository.set_attendance_logs(result.get("name"), "checkout")
