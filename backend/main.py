@@ -6,6 +6,10 @@ from api.endpoints import face_recognition
 from config import AppConfig
 from database import DatabaseManager
 from models import AttendanceRequest, HealthResponse
+from pydantic import BaseModel
+import base64
+import numpy as np
+import cv2
 
 # 環境変数を読み込み
 load_dotenv()
@@ -104,6 +108,17 @@ async def get_users():
 
 app.include_router(face_recognition.router, prefix="/face_recognition", tags=["Face_recognition"])
 
+@app.post("/stream_frame/")
+async def stream_frame(data: FrameData):
+    img_bytes = base64.b64decode(data.frame)
+    np_arr = np.frombuffer(img_bytes, np.uint8)
+    img = cv2.imdecode(np_arr, cv2.IMREAD_COLOR)
+
+    # ログとして表示！
+    print("画像受信！形状:", img.shape)
+
+    # ここでジェスチャー判定を呼ぶこともできる！
+    return {"message": "フレーム受信しました"}
 
 if __name__ == "__main__":
     import uvicorn
