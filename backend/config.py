@@ -22,11 +22,11 @@ class DatabaseConfig:
 @dataclass
 class AppConfig:
     database: DatabaseConfig
-    cors_origins: list[str]
+    #cors_origins: list[str]
     
     @classmethod
     def from_env(cls) -> "AppConfig":
         return cls(
             database=DatabaseConfig.from_env(),
-            cors_origins=["http://localhost:3000", "http://localhost:3001", "*"],
+            # cors_origins=["http://localhost:3000", "http://localhost:3001"],
         )

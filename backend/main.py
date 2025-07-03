@@ -16,6 +16,9 @@ import pose_recognition
 
 check_fingers = False
 
+class FrameData(BaseModel):
+    frame: str  # base64エンコードされた画像データ
+
 # 環境変数を読み込み
 load_dotenv()
 
@@ -25,14 +28,14 @@ db_manager = DatabaseManager(config.database)
 
 app = FastAPI(title="勤怠管理システム API", version="1.0.0")
 
-# CORS設定
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=config.cors_origins,
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
+# # CORS設定
+# app.add_middleware(
+#     CORSMiddleware,
+#     allow_origins=config.cors_origins,
+#     allow_credentials=True,
+#     allow_methods=["*"],
+#     allow_headers=["*"],
+# )
 
 @app.get("/")
 async def root():

@@ -42,9 +42,9 @@ export default function QuickAttendance({
     const nextAction = getNextAction(userName)
     
     if (nextAction === 'checkin') {
-      return 'bg-green-600 hover:bg-green-700 text-white border-green-600'
+      return 'bg-green-600 hover:bg-green-700 active:bg-green-800 text-white shadow-sm'
     } else {
-      return 'bg-red-600 hover:bg-red-700 text-white border-red-600'
+      return 'bg-red-600 hover:bg-red-700 active:bg-red-800 text-white shadow-sm'
     }
   }
 
@@ -52,16 +52,16 @@ export default function QuickAttendance({
     const nextAction = getNextAction(userName)
     
     if (nextAction === 'checkin') {
-      return '🟢 Check In'
+      return 'Check In'
     } else {
-      return '🔴 Check Out'
+      return 'Check Out'
     }
   }
 
   return (
-    <div className="bg-white shadow-lg rounded-lg p-6 mb-6">
-      <h2 className="text-xl font-semibold mb-4">Attendance Status</h2>
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+    <div className="bg-white shadow rounded-lg p-6 mb-6">
+      <h2 className="text-xl font-semibold mb-6">Attendance Status</h2>
+      <div className="space-y-4">
         {users.map((user) => {
           const currentStatus = getUserStatus(user.name)
           const nextAction = getNextAction(user.name)
@@ -70,43 +70,40 @@ export default function QuickAttendance({
           return (
             <div
               key={user.id}
-              className={`p-4 rounded-lg border-2 transition-all ${
-                currentStatus === 'checkin'
-                  ? 'border-green-500 bg-green-50'
-                  : 'border-red-500 bg-red-50'
-              }`}
+              className="flex items-center justify-between p-4 rounded-lg border-2 hover:bg-gray-50 transition-colors"
             >
-              <div className="flex flex-col space-y-3">
-                {/* ユーザー名とステータス */}
-                <div className="flex items-center justify-between">
-                  <h3 className="font-semibold text-gray-800">{user.name}</h3>
+              <div className="flex items-center space-x-4">
+                <div className="flex items-center space-x-3">
+                  <span className="text-lg font-semibold text-gray-900">{user.name}</span>
                   <span
-                    className={`px-3 py-1 rounded-full text-sm font-semibold ${
+                    className={`px-3 py-1 text-sm font-bold rounded-full ${
                       currentStatus === 'checkin'
-                        ? 'bg-green-200 text-green-800'
-                        : 'bg-red-200 text-red-800'
+                        ? 'bg-green-100 text-green-800'
+                        : 'bg-red-100 text-red-800'
                     }`}
                   >
                     {currentStatus === 'checkin' ? 'IN' : 'OUT'}
                   </span>
                 </div>
-
-                {/* 最後のアクション時刻 */}
                 {lastActionTime && (
-                  <p className="text-sm text-gray-600">
-                    Last: {new Date(lastActionTime).toLocaleString('ja-JP')}
-                  </p>
+                  <span className="text-sm text-gray-500 ml-4">
+                    Last: {new Date(lastActionTime).toLocaleString('en-US', {
+                      month: 'short',
+                      day: 'numeric',
+                      hour: '2-digit',
+                      minute: '2-digit'
+                    })}
+                  </span>
                 )}
-
-                {/* ワンタップボタン */}
-                <button
-                  onClick={() => onToggle(user.name, nextAction)}
-                  disabled={submitting}
-                  className={`w-full px-4 py-2 rounded-md font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed ${getButtonStyle(user.name)}`}
-                >
-                  {submitting ? 'Processing...' : getButtonText(user.name)}
-                </button>
               </div>
+              
+              <button
+                onClick={() => onToggle(user.name, nextAction)}
+                disabled={submitting}
+                className={`px-6 py-3 text-base font-semibold rounded-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed transform hover:scale-105 active:scale-95 min-w-[120px] ${getButtonStyle(user.name)}`}
+              >
+                {submitting ? 'Loading...' : getButtonText(user.name)}
+              </button>
             </div>
           )
         })}
