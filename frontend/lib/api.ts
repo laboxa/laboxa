@@ -1,4 +1,5 @@
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'
+// Next.js API Routesを経由してバックエンドにアクセス
+const API_BASE_URL = '/api' // Next.js内部のAPI Routes
 
 export interface AttendanceLog {
   id: number
@@ -42,19 +43,19 @@ class AttendanceAPI {
   }
 
   async getAttendanceLogs(): Promise<{ data: AttendanceLog[] }> {
-    return this.request('/api/attendance')
+    return this.request('/attendance')
   }
 
   async getUsers(): Promise<{ data: User[] }> {
-    return this.request('/api/users')
+    return this.request('/users')
   }
 
   async getUsersStatus(): Promise<{ data: UserStatus[] }> {
-    return this.request('/api/users/status')
+    return this.request('/users/status')
   }
 
   async createAttendance(request: AttendanceRequest): Promise<{ message: string }> {
-    return this.request('/api/attendance', {
+    return this.request('/attendance', {
       method: 'POST',
       body: JSON.stringify(request),
     })

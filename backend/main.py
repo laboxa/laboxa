@@ -9,7 +9,10 @@ from models import AttendanceRequest, HealthResponse
 from pydantic import BaseModel
 import base64
 import numpy as np
-import cv2
+import cv2  # 一時的にコメントアウト
+
+class FrameData(BaseModel):
+    frame: str  # base64エンコードされた画像データ
 
 # 環境変数を読み込み
 load_dotenv()
@@ -20,14 +23,14 @@ db_manager = DatabaseManager(config.database)
 
 app = FastAPI(title="勤怠管理システム API", version="1.0.0")
 
-# CORS設定
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=config.cors_origins,
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
+# # CORS設定
+# app.add_middleware(
+#     CORSMiddleware,
+#     allow_origins=config.cors_origins,
+#     allow_credentials=True,
+#     allow_methods=["*"],
+#     allow_headers=["*"],
+# )
 
 @app.get("/")
 async def root():
@@ -115,7 +118,7 @@ async def stream_frame(data: FrameData):
     img = cv2.imdecode(np_arr, cv2.IMREAD_COLOR)
 
     # ログとして表示！
-    print("画像受信！形状:", img.shape)
+    print("フレームデータを受信しました")
 
     # ここでジェスチャー判定を呼ぶこともできる！
     return {"message": "フレーム受信しました"}
