@@ -9,7 +9,8 @@ RUN apt-get update && apt-get install -y \
     build-essential \
     default-libmysqlclient-dev \
     libmariadb-dev \
-    libmariadb-dev-compat
+    libmariadb-dev-compat \
+    python3-opencv
 
 # requirements.txtをコピー
 COPY requirements.txt .

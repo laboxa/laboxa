@@ -1,4 +1,4 @@
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
 from dotenv import load_dotenv
 from api.endpoints import face_recognition
@@ -7,9 +7,14 @@ from config import AppConfig
 from database import DatabaseManager
 from models import AttendanceRequest, HealthResponse
 from pydantic import BaseModel
+from PIL import Image
+import io
 import base64
-import numpy as np
 import cv2
+import numpy as np
+import pose_recognition
+
+check_fingers = False
 
 # 環境変数を読み込み
 load_dotenv()
@@ -108,17 +113,18 @@ async def get_users():
 
 app.include_router(face_recognition.router, prefix="/face_recognition", tags=["Face_recognition"])
 
-@app.post("/stream_frame/")
-async def stream_frame(data: FrameData):
-    img_bytes = base64.b64decode(data.frame)
-    np_arr = np.frombuffer(img_bytes, np.uint8)
-    img = cv2.imdecode(np_arr, cv2.IMREAD_COLOR)
 
-    # ログとして表示！
-    print("画像受信！形状:", img.shape)
-
-    # ここでジェスチャー判定を呼ぶこともできる！
-    return {"message": "フレーム受信しました"}
+@app.post("/estimate_pose/")
+async def estimate_pose(request: Request):
+    form = await request.form()
+    file = form['ufile']
+    bf = await file.read()
+    img_bin = io.BytesIO(bf)
+    image = Image.open(img_bin).convert("RGB")
+    numpy_image = np.array(image)
+    opencv_image = cv2.cvtColor(numpy_image, cv2.COLOR_RGB2BGR)
+    result = pose_recognition.detect_hand_gesture(opencv_image, check_fingers)
+    return result
 
 if __name__ == "__main__":
     import uvicorn
