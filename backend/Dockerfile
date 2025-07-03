@@ -1,17 +1,22 @@
 # Python 3.11のAlpineイメージを使用
-FROM python:3.11-alpine
+FROM python:3.11
 
 # 作業ディレクトリを設定
 WORKDIR /app
 
 # システムの依存関係をインストール
-RUN apk add --no-cache gcc musl-dev mariadb-connector-c-dev
+RUN apt-get update && apt-get install -y \
+    build-essential \
+    default-libmysqlclient-dev \
+    libmariadb-dev \
+    libmariadb-dev-compat
 
 # requirements.txtをコピー
 COPY requirements.txt .
 
 # Python依存関係をインストール
-RUN pip install --no-cache-dir -r requirements.txt
+RUN pip install --upgrade pip \
+    && pip install --no-cache-dir -r requirements.txt
 
 # アプリケーションのソースコードをコピー
 COPY . .
