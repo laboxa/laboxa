@@ -38,11 +38,10 @@ if not cap.isOpened():
     print("エラー: カメラを開けません")
     exit()
 
+pygame.mixer.init()
 # 1フレーム分の画像を取得
 while True:
     ret, frame = cap.read()
-
-    pygame.mixer.init()
 
     if ret:
         # 取得した画像を保存
