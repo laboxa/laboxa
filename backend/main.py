@@ -121,11 +121,14 @@ async def get_users():
 app.include_router(face_recognition.router, prefix="/face_recognition", tags=["Face_recognition"])
 
 
+def change_status(status):
+    global check_fingers, change_time
+    check_fingers = status
+    change_time = datetime.now()
+
 @app.post("/estimate_pose/")
 async def estimate_pose(request: Request):
     global check_fingers
-    # test用
-    # check_fingers = True
 
     form = await request.form()
     file = form['ufile']
@@ -138,7 +141,7 @@ async def estimate_pose(request: Request):
     message = ""
     name = None
     if result == "hand_circle":
-        check_fingers = True
+        change_status(True)
     elif result == "piece":# 入室
         recog_result = face_recognition_service.checkin(image)
         if recog_result.get("status") == True:
@@ -146,7 +149,7 @@ async def estimate_pose(request: Request):
             name = recog_result.get("name")
         else:
             message = "error"
-        check_fingers = False
+        change_status(False)
     elif result == "corna":# 退室
         recog_result = face_recognition_service.checkout(image)
         if recog_result.get("status") == True:
@@ -154,12 +157,12 @@ async def estimate_pose(request: Request):
             name = recog_result.get("name")
         else:
             message = "error"
-        check_fingers = False
+        change_status(False)
     elif result == "vertical":
         # switchbotを操作
-        check_fingers = False
-    elif (datetime.now() - change_time).total_seconds() > 5:
-        check_fingers = False
+        change_status(False)
+    elif (datetime.now() - change_time).total_seconds() > 10:
+        change_status(False)
     return {"gesture" : result, "status" : check_fingers, "attendance_message" : message, "attendance_name" : name}
 
 if __name__ == "__main__":
