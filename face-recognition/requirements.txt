@@ -3,3 +3,4 @@ facenet_pytorch
 faiss-cpu
 matplotlib==3.10.3
 kagglehub==0.3.12
+scikit-learn==1.7.0

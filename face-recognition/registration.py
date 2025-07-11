@@ -96,8 +96,8 @@ def main():
     print("特徴量を抽出します")
     learn(name)
     print("特徴量を抽出しました")
-    send(name)
-    print ("特徴量を送信しました")
+    # send(name)
+    # print ("特徴量を送信しました")
 
 
 if __name__ == "__main__":

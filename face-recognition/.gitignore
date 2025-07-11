@@ -1,5 +1,6 @@
 /venv/
 /kaggle/
+/test_images/
 
 *.jpg
 *:Zone.Identifier
