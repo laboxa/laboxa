@@ -8,6 +8,7 @@ from PIL import Image
 import numpy as np
 import requests
 import os
+import time
 
 ImgRootDir = "./kaggle/input/face-recognition-dataset/Original Images/Original Images/"
 image_extensions = (".jpg")
@@ -38,6 +39,7 @@ def capture(name):
         else:
             count += 1
             cv2.imwrite("{}{}_{}.jpg".format(dirPath, name, count), frame)
+            time.sleep(0.2)  # 少し待つことでカメラのフレームレートに対応
 
     capture.release()
     cv2.destroyAllWindows()

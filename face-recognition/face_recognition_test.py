@@ -18,7 +18,7 @@ Embedding_extensions = (".npy")
 class Face_recognition:
     device = "cuda" if torch.cuda.is_available() else "cpu"
     # パラメータ
-    threshold = 0.5  # 類似度の閾値
+    threshold = 0.4  # 類似度の閾値
     dim = 512# 特徴量の次元数
     nlist = 20# クラスタ数．画像数の√を目安にする？
     m = 32# PQの分類数
@@ -87,15 +87,15 @@ class Face_recognition:
         embedding = self.resnet(face.unsqueeze(0)).cpu().detach().numpy()
         D, I = self.index.search(embedding, 10)
 
-        # print("\n\n類似度の高い人物")
-        # for d, i in zip(D[0], I[0]):
-            # print("  distance = ", d, "index = ", i, self.id2name[i])
+        print("\n\n類似度の高い人物")
+        for d, i in zip(D[0], I[0]):
+            print("  distance = ", d, "index = ", i, self.id2name[i])
 
         counter = Counter(I[0])
         predicted_id, freq = counter.most_common(1)[0]
-        # if freq >= 5 and np.mean(D[0][:freq]) > self.threshold:
-        if np.mean(D[0][0]) > self.threshold:
-            # print("認識された人物:", self.id2name[predicted_id])
+        if freq >= 5 and np.mean(D[0][:freq]) > self.threshold:
+        # if np.mean(D[0][0]) > self.threshold:
+            print("認識された人物:", self.id2name[predicted_id])
             return {"status": "true", "name": self.id2name[predicted_id]}
         else:
             print("認識できませんでした")
@@ -103,7 +103,8 @@ class Face_recognition:
 
 recognizer = Face_recognition()
 
-test_root = f"{Base_dir}/test_images/"
+# test_root = f"{Base_dir}/test_images/"
+test_root = f"{Base_dir}/test_images_dk/"
 
 y_true = []
 y_pred = []
@@ -125,9 +126,7 @@ for person_name in os.listdir(test_root):
 
         result = recognizer.inference(pil_image)
 
-        if result["status"] == "no_face":
-            continue
-        elif result["status"] == "true":
+        if result["status"] == "true":
             y_true.append(person_name)
             y_pred.append(result["name"])
         else:

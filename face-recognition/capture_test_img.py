@@ -6,9 +6,11 @@ from PIL import Image
 import numpy as np
 import requests
 from pathlib import Path
+import time
 
 Base_dir = Path(__file__).resolve().parent
 ImgRootDir = f"{Base_dir}/test_images/"
+# ImgRootDir = f"{Base_dir}/test_images_dk/"
 
 def capture(name):
     dirPath = ImgRootDir + name + "/"
@@ -35,6 +37,7 @@ def capture(name):
         else:
             count += 1
             cv2.imwrite("{}{}_{}.jpg".format(dirPath, name, count), frame)
+            time.sleep(0.2)
 
     capture.release()
     cv2.destroyAllWindows()
