@@ -1,8 +1,15 @@
 # voicevoxを起動しておく必要がある
 
+import os
 import requests
 import json
-import pyaudio
+import subprocess
+import tempfile
+
+# 音声関連のエラーを抑制するための環境変数設定
+# aplay -lでちぇっくせよ
+os.environ['ALSA_PCM_CARD'] = '4'
+os.environ['ALSA_PCM_DEVICE'] = '0'
 
 def talk(text):
     try:
@@ -30,23 +37,33 @@ def talk(text):
             data = json.dumps(query.json())
         )
         
-        # 再生処理
+        # 音声データを一時ファイルに保存
         voice = synthesis.content
-        pya = pyaudio.PyAudio()
+        with tempfile.NamedTemporaryFile(delete=False, suffix='.wav') as temp_file:
+            temp_file.write(voice)
+            temp_file_path = temp_file.name
         
-        # サンプリングレートが24000以外だとずんだもんが高音になったり低音になったりする
-        stream = pya.open(format=pyaudio.paInt16,
-                        channels=1,
-                        rate=24000,
-                        output=True)
+        # aplayで音声再生（カード4のスピーカーを指定）
+        try:
+            subprocess.run(['aplay', '-D', 'plughw:4,0', temp_file_path], 
+                         stdout=subprocess.DEVNULL,
+                         stderr=subprocess.DEVNULL)
+            print("音声再生完了")
+        except:
+            print("音声再生に失敗しました")
         
-        stream.write(voice)
-        stream.stop_stream()
-        stream.close()
-        pya.terminate()
+        # 一時ファイルを削除
+        try:
+            os.unlink(temp_file_path)
+        except:
+            pass
+                
     except requests.exceptions.ConnectionError:
         print("Voicevoxを起動して下さい")
-        exit()
+        return
+    except Exception as e:
+        print(f"エラー: {e}")
+        return
     
 if __name__ == "__main__":
     while True:
