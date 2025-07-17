@@ -1,9 +1,7 @@
 import asyncio
 import argparse
-import sys
 from bleak import BleakScanner, BleakClient
-
-# E1:3D:04:86:18:7C
+from config import SWITCHBOT_MAC_ADDRESS
 
 def scan():
     async def run():
@@ -12,7 +10,10 @@ def scan():
             print(d)
     asyncio.run(run())
 
-async def switchBot(address="E1:3D:04:86:18:7C"):
+async def switchBot(address=None):
+    if address is None:
+        address = SWITCHBOT_MAC_ADDRESS
+    
     # SwitchBot のボタン押下コマンド
     COMMAND_UUID = "cba20002-224d-11e6-9fb8-0002a5d5c51b"
     command = bytearray([0x57, 0x01, 0x00])
@@ -20,7 +21,7 @@ async def switchBot(address="E1:3D:04:86:18:7C"):
         await client.write_gatt_char(COMMAND_UUID, command)
 
 def main():
-    parser = argparse.ArgumentParser()
+    parser = argparse.ArgumentParser(description="SwitchBot controller")
     parser.add_argument('-s', '--scan', action='store_true',
                         help="Scan BLE devices")
     parser.add_argument('-d', '--device', type=str,
@@ -32,7 +33,7 @@ def main():
     elif args.device:
         asyncio.run(switchBot(args.device))
     else:
-        print("引数が必要です。--scan または --device <MACアドレス> を指定してください。")
+        asyncio.run(switchBot())
 
 if __name__ == '__main__':
     main()
