@@ -76,3 +76,8 @@ docker compose up
 - 手を上げる：照明ON/OFF
 - 親指を上げる：エアコン温度UP
 - 親指を下げる：エアコン温度DOWN
+
+# voicevox container for raspberry pi
+```
+docker run --rm -it -p '127.0.0.1:50021:50021' voicevox/voicevox_engine:cpu-latest
+```
