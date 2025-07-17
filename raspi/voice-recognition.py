@@ -2,6 +2,7 @@ import asyncio
 import speech_recognition as sr
 from sentence_transformers import SentenceTransformer, util
 import subprocess
+import time
 from config import SPEAKER_DEVICE, MIC_DEVICE, THRESHOLD
 import switchBot
 import zunda
@@ -92,10 +93,17 @@ def main():
             with sr.Microphone(device_index=mic_device_index) as source:
                 r.adjust_for_ambient_noise(source)
                 print("話しかけてください...")
+                
+                # 音声認識の開始時間を記録
+                recognition_start_time = time.time()
                 audio = r.listen(source, timeout=5, phrase_time_limit=5)
                 
             recognized_text = r.recognize_google(audio, language='ja-JP')
+            recognition_end_time = time.time()
+            recognition_duration = recognition_end_time - recognition_start_time
+            
             print("認識結果:", recognized_text)
+            print(f"音声認識時間: {recognition_duration:.3f}秒")
             
             process_voice_command(recognized_text)
         

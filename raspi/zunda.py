@@ -4,6 +4,7 @@ import requests
 import json
 import subprocess
 import tempfile
+import time
 from config import SPEAKER_DEVICE
 
 def talk(text):
@@ -13,6 +14,9 @@ def talk(text):
         port = 50021
         
         params = (('text', text), ('speaker', 2))
+        
+        # 音声合成の開始時間を記録
+        synthesis_start_time = time.time()
         
         # 音声合成用のクエリ作成
         query = requests.post(f'http://{host}:{port}/audio_query', params=params)
@@ -24,6 +28,11 @@ def talk(text):
             params=params,
             data=json.dumps(query.json())
         )
+        
+        # 音声合成の終了時間を記録
+        synthesis_end_time = time.time()
+        synthesis_duration = synthesis_end_time - synthesis_start_time
+        print(f"音声合成時間: {synthesis_duration:.3f}秒")
         
         # 音声データを一時ファイルに保存
         voice = synthesis.content
