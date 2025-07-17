@@ -18,6 +18,8 @@ from datetime import datetime
 from services import face_recognition_service
 
 check_fingers = False
+# check_fingers = True
+# true: 受付 false: サークルの受付
 change_time = datetime.now()
 
 class FrameData(BaseModel):
@@ -140,9 +142,13 @@ async def estimate_pose(request: Request):
     result = pose_recognition.detect_hand_gesture(opencv_image, check_fingers)
     message = ""
     name = None
-    if result == "hand_circle":
+    gesture = "no_gesture"
+    if result == "hand_circle" and not check_fingers:
+        gesture = "hand_circle"
         change_status(True)
+        # print("受付モードに変更")
     elif result == "piece":# 入室
+        gesture = result
         recog_result = face_recognition_service.checkin(image)
         if recog_result.get("status") == True:
             message = "checkin"
@@ -151,6 +157,7 @@ async def estimate_pose(request: Request):
             message = "error"
         change_status(False)
     elif result == "corna":# 退室
+        gesture = result
         recog_result = face_recognition_service.checkout(image)
         if recog_result.get("status") == True:
             message = "checkout"
@@ -159,11 +166,16 @@ async def estimate_pose(request: Request):
             message = "error"
         change_status(False)
     elif result == "vertical":
+        gesture = result
         # switchbotを操作
         change_status(False)
     elif (datetime.now() - change_time).total_seconds() > 10:
+        gesture = "no_gesture"
         change_status(False)
-    return {"gesture" : result, "status" : check_fingers, "attendance_message" : message, "attendance_name" : name}
+    else:
+        gesture = "no_gesture"
+    print(f"Gesture: {gesture}, Status: {check_fingers}, Message: {message}, Name: {name}")
+    return {"gesture" : gesture, "status" : check_fingers, "attendance_message" : message, "attendance_name" : name}
 
 if __name__ == "__main__":
     import uvicorn

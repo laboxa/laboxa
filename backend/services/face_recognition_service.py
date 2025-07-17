@@ -14,7 +14,7 @@ Embedding_extensions = (".npy")
 class Face_recognition:
     device = "cuda" if torch.cuda.is_available() else "cpu"
     # パラメータ
-    threshold = 0.7  # 類似度の閾値
+    threshold = 0.4  # 類似度の閾値
     dim = 512# 特徴量の次元数
     nlist = 20# クラスタ数．画像数の√を目安にする？
     m = 32# PQの分類数
