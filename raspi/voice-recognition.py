@@ -68,6 +68,12 @@ def process_voice_command(recognized_text):
         subprocess.run(['aplay', '-D', SPEAKER_DEVICE, 'pi.wav'], 
                       stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
         zunda.talk("私は音声アシスタント，ラボ草です")
+
+    elif cosineScore(recognized_text, "ただいま") >= 0.95:
+        subprocess.run(['aplay', '-D', SPEAKER_DEVICE, 'pi.wav'], 
+                        stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        zunda.talk("おかえりなさい．お疲れ様です")
+
 def main():
     """メイン処理"""
     r = sr.Recognizer()

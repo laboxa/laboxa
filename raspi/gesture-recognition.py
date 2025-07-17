@@ -71,6 +71,7 @@ def process_gesture(gesture, attendance_message, attendance_name):
         play_sound('pi.wav')
         sleep(0.5)
     elif gesture == 'piece':
+        play_sound('pi.wav')
         if attendance_message == 'checkin':
             print(f"{attendance_name}さんが入室しました")
             zunda.talk(f"{attendance_name}さんが入室しました")
@@ -78,6 +79,7 @@ def process_gesture(gesture, attendance_message, attendance_name):
             print("入室できませんでした")
             zunda.talk("入室できませんでした")
     elif gesture == 'corna':
+        play_sound('pi.wav')
         if attendance_message == 'checkout':
             print(f"{attendance_name}さんが退室しました")
             zunda.talk(f"{attendance_name}さんが退室しました")
@@ -85,6 +87,7 @@ def process_gesture(gesture, attendance_message, attendance_name):
             print("退室できませんでした")
             zunda.talk("退室できませんでした")
     elif gesture == 'vertical':
+        play_sound('pi.wav')
         asyncio.run(switchBot.switchBot()) 
         print("スイッチを操作しました")
         zunda.talk("スイッチを操作しました")
