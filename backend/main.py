@@ -16,7 +16,8 @@ import pose_recognition
 from datetime import datetime
 
 from services import face_recognition_service
-
+from ml import set_up
+from ml_estimate import predict_hand_pose
 check_fingers = False
 # check_fingers = True
 # true: 受付 false: サークルの受付
@@ -147,7 +148,7 @@ async def estimate_pose(request: Request):
         gesture = "hand_circle"
         change_status(True)
         # print("受付モードに変更")
-    elif result == "piece":# 入室
+    elif result == "piece" and check_fingers:# 入室
         gesture = result
         recog_result = face_recognition_service.checkin(image)
         if recog_result.get("status") == True:
@@ -156,7 +157,7 @@ async def estimate_pose(request: Request):
         else:
             message = "error"
         change_status(False)
-    elif result == "corna":# 退室
+    elif result == "corna" and check_fingers:# 退室
         gesture = result
         recog_result = face_recognition_service.checkout(image)
         if recog_result.get("status") == True:
@@ -165,8 +166,57 @@ async def estimate_pose(request: Request):
         else:
             message = "error"
         change_status(False)
-    elif result == "vertical":
+    elif result == "vertical" and check_fingers:
         gesture = result
+        # switchbotを操作
+        change_status(False)
+    elif (datetime.now() - change_time).total_seconds() > 10:
+        gesture = "no_gesture"
+        change_status(False)
+    else:
+        gesture = "no_gesture"
+    print(f"Gesture: {gesture}, Status: {check_fingers}, Message: {message}, Name: {name}")
+    return {"gesture" : gesture, "status" : check_fingers, "attendance_message" : message, "attendance_name" : name}
+
+model_both, scaler_both, hands_both = set_up()
+@app.post("/estimate_pose_ml/")
+async def estimate_pose_ml(request: Request):
+    global check_fingers, model_both, scaler_both, hands_both
+    form = await request.form()
+    file = form['ufile']
+    bf = await file.read()
+    img_bin = io.BytesIO(bf)
+    image = Image.open(img_bin).convert("RGB")
+    numpy_image = np.array(image)
+    opencv_image = cv2.cvtColor(numpy_image, cv2.COLOR_RGB2BGR)
+    result = predict_hand_pose(opencv_image, model_both, scaler_both, hands_both)
+    message = ""
+    name = None
+    gesture = "no_gesture"
+    if result == 3 and not check_fingers:
+        gesture = "hand_circle"
+        change_status(True)
+        # print("受付モードに変更")
+    elif result == 1:# 入室
+        gesture = "piece"
+        recog_result = face_recognition_service.checkin(image)
+        if recog_result.get("status") == True:
+            message = "checkin"
+            name = recog_result.get("name")
+        else:
+            message = "error"
+        change_status(False)
+    elif result == 0:# 退室
+        gesture = "corna"
+        recog_result = face_recognition_service.checkout(image)
+        if recog_result.get("status") == True:
+            message = "checkout"
+            name = recog_result.get("name")
+        else:
+            message = "error"
+        change_status(False)
+    elif result == 2:
+        gesture = "vertical"
         # switchbotを操作
         change_status(False)
     elif (datetime.now() - change_time).total_seconds() > 10:

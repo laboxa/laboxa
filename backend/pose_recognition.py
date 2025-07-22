@@ -31,6 +31,14 @@ def is_thumb_index_right_angle_with_fist(lm):
     angle = calc_angle(lm.landmark[4], lm.landmark[2], lm.landmark[8])
     return (40 <= angle <= 150) and not is_finger_up(lm, 12, 10) and not is_finger_up(lm, 16, 14) and not is_finger_up(lm, 20, 18)
 def is_both_hands_circle(h1, h2): return calc_distance(h1.landmark[8], h2.landmark[8]) < 0.3 and calc_distance(h1.landmark[4], h2.landmark[4]) < 0.3
+def is_fist(lm):
+    return (
+        not is_finger_up(lm, 8, 6) and
+        not is_finger_up(lm, 12, 10) and
+        not is_finger_up(lm, 16, 14) and
+        not is_finger_up(lm, 20, 18) and
+        not is_thumb_up(lm)
+    )
 
 # この関数を main.py から呼び出す
 def detect_hand_gesture(image_bgr, check_fingers):
@@ -52,7 +60,7 @@ def detect_hand_gesture(image_bgr, check_fingers):
                 return "piece"
             elif is_index_and_pinky_up_only(lm):
                 return "corna"
-            elif is_thumb_index_right_angle_with_fist(lm):
+            elif is_fist(lm):
                 return "vertical"
 
     return "no_gesture"

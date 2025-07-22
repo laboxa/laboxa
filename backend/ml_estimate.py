@@ -6,14 +6,29 @@ import cv2
 import mediapipe as mp
 from sklearn.preprocessing import StandardScaler
 
+# def extract_hand_landmarks(image, hands):
+#     image_rgb = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+#     results = hands.process(image_rgb)
+#     if results.multi_hand_landmarks:
+#         landmarks = results.multi_hand_landmarks[0]
+#         coords = []
+#         for lm in landmarks.landmark:
+#             coords.extend([lm.x, lm.y, lm.z])
+#         return coords
+#     return None
+
+
 def extract_hand_landmarks(image, hands):
     image_rgb = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
     results = hands.process(image_rgb)
+    coords = []
+
     if results.multi_hand_landmarks:
-        landmarks = results.multi_hand_landmarks[0]
-        coords = []
-        for lm in landmarks.landmark:
-            coords.extend([lm.x, lm.y, lm.z])
+        for hand_landmarks in results.multi_hand_landmarks:
+            for lm in hand_landmarks.landmark:
+                coords.extend([lm.x, lm.y, lm.z])
+    
+    if len(coords) == 63 * 2:  # 両手分（126次元）あることを確認
         return coords
     return None
 
