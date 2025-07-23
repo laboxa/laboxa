@@ -29,7 +29,7 @@ def is_peace_sign(lm): return is_finger_up(lm, 8, 6) and is_finger_up(lm, 12, 10
 def is_index_and_pinky_up_only(lm): return is_finger_up(lm, 8, 6) and is_finger_up(lm, 20, 18) and not is_thumb_up(lm) and not is_finger_up(lm, 12, 10) and not is_finger_up(lm, 16, 14)
 def is_thumb_index_right_angle_with_fist(lm):
     angle = calc_angle(lm.landmark[4], lm.landmark[2], lm.landmark[8])
-    return (80 <= angle <= 100) and not is_finger_up(lm, 12, 10) and not is_finger_up(lm, 16, 14) and not is_finger_up(lm, 20, 18)
+    return (40 <= angle <= 150) and not is_finger_up(lm, 12, 10) and not is_finger_up(lm, 16, 14) and not is_finger_up(lm, 20, 18)
 def is_both_hands_circle(h1, h2): return calc_distance(h1.landmark[8], h2.landmark[8]) < 0.3 and calc_distance(h1.landmark[4], h2.landmark[4]) < 0.3
 
 # この関数を main.py から呼び出す

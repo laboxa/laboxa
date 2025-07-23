@@ -13,8 +13,12 @@ import base64
 import cv2
 import numpy as np
 import pose_recognition
+from datetime import datetime
+
+from services import face_recognition_service
 
 check_fingers = False
+change_time = datetime.now()
 
 class FrameData(BaseModel):
     frame: str  # base64エンコードされた画像データ
@@ -119,6 +123,10 @@ app.include_router(face_recognition.router, prefix="/face_recognition", tags=["F
 
 @app.post("/estimate_pose/")
 async def estimate_pose(request: Request):
+    global check_fingers
+    # test用
+    # check_fingers = True
+
     form = await request.form()
     file = form['ufile']
     bf = await file.read()
@@ -127,7 +135,32 @@ async def estimate_pose(request: Request):
     numpy_image = np.array(image)
     opencv_image = cv2.cvtColor(numpy_image, cv2.COLOR_RGB2BGR)
     result = pose_recognition.detect_hand_gesture(opencv_image, check_fingers)
-    return result
+    message = ""
+    name = None
+    if result == "hand_circle":
+        check_fingers = True
+    elif result == "piece":# 入室
+        recog_result = face_recognition_service.checkin(image)
+        if recog_result.get("status") == True:
+            message = "checkin"
+            name = recog_result.get("name")
+        else:
+            message = "error"
+        check_fingers = False
+    elif result == "corna":# 退室
+        recog_result = face_recognition_service.checkout(image)
+        if recog_result.get("status") == True:
+            message = "checkout"
+            name = recog_result.get("name")
+        else:
+            message = "error"
+        check_fingers = False
+    elif result == "vertical":
+        # switchbotを操作
+        check_fingers = False
+    elif (datetime.now() - change_time).total_seconds() > 5:
+        check_fingers = False
+    return {"gesture" : result, "status" : check_fingers, "attendance_message" : message, "attendance_name" : name}
 
 if __name__ == "__main__":
     import uvicorn
